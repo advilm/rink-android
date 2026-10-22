@@ -1,0 +1,12 @@
+# Android / Gradle build artifacts
+.gradle/
+/build/
+/app/build/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+local.properties
+
+# Locally built Android Rust bridge libraries
+app/src/main/jniLibs/*/librink_bridge.so

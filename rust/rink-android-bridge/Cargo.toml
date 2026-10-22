@@ -1,0 +1,21 @@
+[package]
+name = "rink-android-bridge"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "rink_bridge"
+crate-type = ["cdylib"]
+
+[features]
+bindgen = ["uniffi/cli"]
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "uniffi-bindgen.rs"
+required-features = ["bindgen"]
+
+[dependencies]
+rink-core = { version = "0.9", features = ["bundle-files", "serde_json"] }
+serde = { version = "1", features = ["alloc"] }
+uniffi = "0.32"
