@@ -8,6 +8,7 @@ plugins {
 
 val rinkManualSourceDir = layout.buildDirectory.dir("generated/rink-manual/source")
 val rinkManualAssetsDir = layout.buildDirectory.dir("generated/rink-manual/assets")
+val releaseKeystorePath = providers.environmentVariable("ANDROID_KEYSTORE_PATH").orNull
 
 val downloadRinkManual = tasks.register("downloadRinkManual") {
     notCompatibleWithConfigurationCache("The manual download task uses script-defined task actions")
@@ -65,23 +66,37 @@ val bundleRinkManual = tasks.register<Copy>("bundleRinkManual") {
 android {
     namespace = "net.adilm.rink"
     compileSdk {
-        version = release(37)
+        version = release(36)
     }
 
     defaultConfig {
         applicationId = "net.adilm.rink"
         minSdk = 28
-        targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = providers.environmentVariable("ANDROID_VERSION_CODE").orNull?.toIntOrNull() ?: 1
+        versionName = providers.environmentVariable("ANDROID_VERSION_NAME").orNull?.removePrefix("v") ?: "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     sourceSets.getByName("main").assets.directories.add(rinkManualAssetsDir.get().asFile.absolutePath)
 
+    signingConfigs {
+        if (!releaseKeystorePath.isNullOrBlank()) {
+            create("ciRelease") {
+                storeFile = file(releaseKeystorePath)
+                storePassword = providers.environmentVariable("ANDROID_STORE_PASSWORD").orNull
+                keyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").orNull
+                keyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").orNull
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (!releaseKeystorePath.isNullOrBlank()) {
+                signingConfig = signingConfigs.getByName("ciRelease")
+            }
             optimization {
                 enable = true
                 packageScope = setOf("net.adilm.rink.**")
