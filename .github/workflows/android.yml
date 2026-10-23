@@ -59,11 +59,16 @@ jobs:
       - name: Build debug APK
         run: ./gradlew --no-daemon --no-configuration-cache :app:assembleDebug
 
+      - name: Name debug APK
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/rink-android-debug.apk
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v7
         with:
-          name: rink-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: rink-android-debug
+          path: dist/rink-android-debug.apk
           if-no-files-found: error
           retention-days: 14
 
@@ -147,11 +152,16 @@ jobs:
         with:
           subject-path: app/build/outputs/apk/release/app-release.apk
 
+      - name: Name release APK
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk dist/rink-android-release.apk
+
       - name: Upload release APK for publishing
         uses: actions/upload-artifact@v7
         with:
-          name: rink-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: rink-android-release
+          path: dist/rink-android-release.apk
           if-no-files-found: error
           retention-days: 1
 
@@ -166,7 +176,7 @@ jobs:
       - name: Download release APK
         uses: actions/download-artifact@v8
         with:
-          name: rink-release-apk
+          name: rink-android-release
           path: dist
 
       - name: Publish GitHub Release
@@ -174,7 +184,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           apk="dist/rink-android.apk"
-          mv dist/app-release.apk "$apk"
+          mv dist/rink-android-release.apk "$apk"
           if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" "$apk" --clobber --repo "$GITHUB_REPOSITORY"
           else
