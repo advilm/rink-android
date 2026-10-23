@@ -2,6 +2,7 @@
 .gradle/
 /build/
 /app/build/
+/app/release/
 
 # Android Studio / IntelliJ
 .idea/
@@ -10,3 +11,6 @@ local.properties
 
 # Locally built Android Rust bridge libraries
 app/src/main/jniLibs/*/librink_bridge.so
+
+# Generated UniFFI Kotlin bindings (regenerate with rust/rink-android-bridge/run.sh)
+app/src/main/java/uniffi/rink_bridge/rink_bridge.kt

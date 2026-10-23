@@ -1,0 +1,2 @@
+# UniFFI's JNA bindings use class and field names through reflection.
+-keep class uniffi.rink_bridge.** { *; }

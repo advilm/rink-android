@@ -1,0 +1,3 @@
+# JNA ships desktop-only APIs that reference AWT, which Android does not provide.
+-dontwarn java.awt.Component
+-dontwarn java.awt.Window
