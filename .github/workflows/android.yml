@@ -102,7 +102,7 @@ jobs:
       - name: Set up Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android,x86_64-linux-android
+          targets: aarch64-linux-android
 
       - name: Cache Cargo dependencies and build output
         uses: actions/cache@v6
@@ -120,6 +120,8 @@ jobs:
 
       - name: Build Rust libraries and generate UniFFI bindings
         working-directory: rust/rink-android-bridge
+        env:
+          ANDROID_ABIS: arm64-v8a
         run: bash run.sh
 
       - name: Decode release signing key
